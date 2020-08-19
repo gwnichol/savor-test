@@ -32,6 +32,7 @@ function(add_test TEST_NAME SOURCE_NAME)
 endfunction()
 
 add_test(test-serial src/test-serial.c)
+add_test(test-spi src/test-spi.c)
 
 add_custom_target(serial
 	COMMAND ${CMAKE_COMMAND} -E env bash -c "stty -F $(pavr2cmd --ttl-port) raw ${SERIAL_BAUD}"

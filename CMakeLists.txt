@@ -26,7 +26,7 @@ function(add_test TEST_NAME SOURCE_NAME)
 	target_link_libraries(${TEST_NAME}.elf savor)
 	add_custom_target(${TEST_NAME}-hex ALL DEPENDS ${TEST_NAME}.hex)
 	add_custom_command(OUTPUT ${TEST_NAME}.hex COMMAND ${CMAKE_C_OBJCOPY} ARGS -R .eeprom -O ihex ${TEST_NAME}.elf ${TEST_NAME}.hex DEPENDS ${TEST_NAME}.elf )
-	add_custom_target(${TEST_NAME}-flash
+	add_custom_target(${TEST_NAME}-flash DEPENDS ${TEST_NAME}.hex
 		COMMAND ${CMAKE_COMMAND} -E env bash -c "avrdude -c stk500v2 -P $(pavr2cmd --prog-port) -p ${CMAKE_SYSTEM_PROCESSOR} -U flash:w:${TEST_NAME}.hex:i" 
 		VERBATIM)
 endfunction()
@@ -34,7 +34,7 @@ endfunction()
 add_test(test-serial src/test-serial.c)
 
 add_custom_target(serial
-	COMMAND ${CMAKE_COMMAND} -E env bash -c "stty -F $(pavr2cmd --ttl-port) ${SERIAL_BAUD}"
+	COMMAND ${CMAKE_COMMAND} -E env bash -c "stty -F $(pavr2cmd --ttl-port) raw ${SERIAL_BAUD}"
 	COMMAND ${CMAKE_COMMAND} -E env bash -c "cat $(pavr2cmd --ttl-port)"
 	VERBATIM)
 
